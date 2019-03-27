@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@model FunFacts.ViewModels.FunFactPageViewModel
+<div class="row">
+    <h2>Fun facts about cats</h2>
+</div>
+
+<div class="row">
+    @using (Html.BeginForm("Index","Home"))
+    {
+
+        <p>
+            @*<input id="showMostRecent" type="checkbox" value="showMostRecent"/>*@ 
+            <input type="checkbox" @(Model.IsMostRecent ? "checked" : "") name="showMostRecent" value="true">Show only recent
+        </p>
+        
+            <input type="submit" value="Search" />
+        
+    }
+    
+    Total Items: @Model.FunFacts.Count()
+
+
+    <table class="table">
+        <tbody>
+            @foreach (var funfact in Model.FunFacts)
+            {
+                <tr>
+                    <td>
+                        @funfact.Text
+                        <p>@funfact.UpdatedAt.ToString("G")</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
