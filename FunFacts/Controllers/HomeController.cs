@@ -45,7 +45,7 @@ namespace FunFacts.Controllers
                 //Called Member default GET All records  
                 //GetAsync to send a GET request   
                 // PutAsync to send a PUT request  
-                var responseTask = client.GetAsync(ConfigurationManager.AppSettings[Constants.ApiEndPointKey] + "?amount=100");
+                var responseTask = client.GetAsync(ConfigurationManager.AppSettings[Constants.ApiEndPointKey] + "random?amount=500");
                 responseTask.Wait();
 
                 //To store result of web api response.   
@@ -56,7 +56,7 @@ namespace FunFacts.Controllers
                 {
                     var readTask = result.Content.ReadAsAsync<IList<FunFact>>();
                     readTask.Wait();
-                    funfacts = showRecent ? readTask.Result.Where(f => f.UpdatedAt > DateTime.Now.AddDays(-30)) : readTask.Result.OrderByDescending(f => f.UpdatedAt);
+                    funfacts = showRecent ? readTask.Result.Where(f => f.UpdatedAt.Year == DateTime.Now.Year && f.UpdatedAt.Month == DateTime.Now.AddMonths(-1).Month) : readTask.Result.OrderByDescending(f => f.UpdatedAt).Take(100);
                 }
                 else
                 {
