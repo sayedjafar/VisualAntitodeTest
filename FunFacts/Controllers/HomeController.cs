@@ -14,8 +14,7 @@ namespace FunFacts.Controllers
     {
         public ActionResult Index(bool showMostRecent = false)
         {
-            var funFactPageViewModel = new FunFactPageViewModel();
-            funFactPageViewModel.IsMostRecent = showMostRecent;
+            var funFactPageViewModel = new FunFactPageViewModel { IsMostRecent = showMostRecent };
             funFactPageViewModel.FunFacts = GetFunFactViewModels(funFactPageViewModel.IsMostRecent);
             return View(funFactPageViewModel);
         }
@@ -45,7 +44,9 @@ namespace FunFacts.Controllers
                 //Called Member default GET All records  
                 //GetAsync to send a GET request   
                 // PutAsync to send a PUT request  
-                var responseTask = client.GetAsync(ConfigurationManager.AppSettings[Constants.ApiEndPointKey] + "random?amount=500");
+                var apiUrl = ConfigurationManager.AppSettings[Constants.ApiEndPointKey];
+                if (!showRecent) apiUrl += "random?amount=100";
+                var responseTask = client.GetAsync(apiUrl);
                 responseTask.Wait();
 
                 //To store result of web api response.   
@@ -56,7 +57,7 @@ namespace FunFacts.Controllers
                 {
                     var readTask = result.Content.ReadAsAsync<IList<FunFact>>();
                     readTask.Wait();
-                    funfacts = showRecent ? readTask.Result.Where(f => f.UpdatedAt.Year == DateTime.Now.Year && f.UpdatedAt.Month == DateTime.Now.AddMonths(-1).Month) : readTask.Result.OrderByDescending(f => f.UpdatedAt).Take(100);
+                    funfacts = showRecent ? readTask.Result.Where(f => f.UpdatedAt.Year == DateTime.Now.Year && f.UpdatedAt.Month == DateTime.Now.AddMonths(-1).Month) : readTask.Result.OrderByDescending(f => f.UpdatedAt);
                 }
                 else
                 {
